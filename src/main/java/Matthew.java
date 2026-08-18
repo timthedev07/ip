@@ -16,24 +16,56 @@ public class Matthew {
         System.out.println(banner);
 
         String[] tasks = new String[100];
+        boolean[] done = new boolean[100];
         int i = 0;
 
         String response = "";
 
         while (!response.equals("bye")) {
             response = System.console().readLine();
+
+            if (response.equals("bye")) {
+                break;
+            }
+
             if (response.equals("list")) {
-                int counter = 1;
                 System.out.print(line);
-                for (String s : tasks) {
-                    if (s == null) {
-                        break;
-                    }
-                    System.out.println(String.format("%d. %s", counter++, s));
+                System.out.println("Here are the tasks in your list:");
+
+                for (int j = 0; j < i; j++) {
+                    String status = done[j] ? "X" : " ";
+                    System.out.printf("%d.[%s] %s%n", j + 1, status, tasks[j]);
                 }
+
                 System.out.print(line);
+
+            } else if (response.startsWith("mark ")) {
+                int taskNumber = Integer.parseInt(response.substring(5));
+                int index = taskNumber - 1;
+
+                done[index] = true;
+
+                System.out.print(line);
+                System.out.println("Nice! I've marked this task as done:");
+                System.out.printf("  [X] %s%n", tasks[index]);
+                System.out.print(line);
+
+            } else if (response.startsWith("unmark ")) {
+                int taskNumber = Integer.parseInt(response.substring(7));
+                int index = taskNumber - 1;
+
+                done[index] = false;
+
+                System.out.print(line);
+                System.out.println("OK, I've marked this task as not done yet:");
+                System.out.printf("  [ ] %s%n", tasks[index]);
+                System.out.print(line);
+
             } else {
-                tasks[i++] = response;
+                tasks[i] = response;
+                done[i] = false;
+                i++;
+
                 System.out.println(wrap(String.format("added: %s", response)));
             }
         }
