@@ -4,6 +4,18 @@ public class Matthew {
     private static final String line =
             "____________________________________________________________\n";
 
+    private enum Command {
+        BYE,
+        LIST,
+        MARK,
+        UNMARK,
+        DELETE,
+        TODO,
+        DEADLINE,
+        EVENT,
+        UNKNOWN
+    }
+
     public static void main(String[] args) {
 
         String banner = line
@@ -19,15 +31,20 @@ public class Matthew {
         System.out.println(banner);
 
         ArrayList<Task> tasks = new ArrayList<>();
+        boolean isRunning = true;
 
-        while (true) {
+        while (isRunning) {
             String response = System.console().readLine();
 
             try {
-                if (response.equals("bye")) {
+                Command command = getCommand(response);
+
+                switch (command) {
+                case BYE:
+                    isRunning = false;
                     break;
 
-                } else if (response.equals("list")) {
+                case LIST:
                     System.out.print(line);
                     System.out.println("Here are the tasks in your list:");
 
@@ -36,52 +53,55 @@ public class Matthew {
                     }
 
                     System.out.print(line);
+                    break;
 
-                } else if (response.startsWith("mark")) {
+                case MARK:
                     if (!response.startsWith("mark ")) {
                         throw new MatthewException(
                                 "Please tell me which task to mark, e.g. mark 2.");
                     }
 
-                    int taskNumber = getTaskNumber(
+                    int markNumber = getTaskNumber(
                             response.substring(5), tasks.size());
 
-                    Task task = tasks.get(taskNumber - 1);
-                    task.markAsDone();
+                    Task markedTask = tasks.get(markNumber - 1);
+                    markedTask.markAsDone();
 
                     System.out.print(line);
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + task);
+                    System.out.println("  " + markedTask);
                     System.out.print(line);
+                    break;
 
-                } else if (response.startsWith("unmark")) {
+                case UNMARK:
                     if (!response.startsWith("unmark ")) {
                         throw new MatthewException(
                                 "Please tell me which task to unmark, e.g. unmark 2.");
                     }
 
-                    int taskNumber = getTaskNumber(
+                    int unmarkNumber = getTaskNumber(
                             response.substring(7), tasks.size());
 
-                    Task task = tasks.get(taskNumber - 1);
-                    task.markAsNotDone();
+                    Task unmarkedTask = tasks.get(unmarkNumber - 1);
+                    unmarkedTask.markAsNotDone();
 
                     System.out.print(line);
                     System.out.println(
                             "OK, I've marked this task as not done yet:");
-                    System.out.println("  " + task);
+                    System.out.println("  " + unmarkedTask);
                     System.out.print(line);
+                    break;
 
-                } else if (response.startsWith("delete")) {
+                case DELETE:
                     if (!response.startsWith("delete ")) {
                         throw new MatthewException(
                                 "Please tell me which task to delete, e.g. delete 3.");
                     }
 
-                    int taskNumber = getTaskNumber(
+                    int deleteNumber = getTaskNumber(
                             response.substring(7), tasks.size());
 
-                    Task removedTask = tasks.remove(taskNumber - 1);
+                    Task removedTask = tasks.remove(deleteNumber - 1);
 
                     System.out.print(line);
                     System.out.println("Noted. I've removed this task:");
@@ -90,33 +110,35 @@ public class Matthew {
                             "Now you have " + tasks.size()
                                     + " tasks in the list.");
                     System.out.print(line);
+                    break;
 
-                } else if (response.startsWith("todo")) {
+                case TODO:
                     if (!response.startsWith("todo ")) {
                         throw new MatthewException(
                                 "A todo needs a description.");
                     }
 
-                    String description = response.substring(5).trim();
+                    String todoDescription = response.substring(5).trim();
 
-                    if (description.isEmpty()) {
+                    if (todoDescription.isEmpty()) {
                         throw new MatthewException(
                                 "A todo needs a description.");
                     }
 
-                    Task task = new Todo(description);
-                    tasks.add(task);
+                    Task todo = new Todo(todoDescription);
+                    tasks.add(todo);
 
-                    printAddedTask(task, tasks.size());
+                    printAddedTask(todo, tasks.size());
+                    break;
 
-                } else if (response.startsWith("deadline")) {
+                case DEADLINE:
                     if (!response.startsWith("deadline ")) {
                         throw new MatthewException(
                                 "A deadline needs a description and /by time.");
                     }
 
-                    String input = response.substring(9).trim();
-                    int byIndex = input.indexOf(" /by ");
+                    String deadlineInput = response.substring(9).trim();
+                    int byIndex = deadlineInput.indexOf(" /by ");
 
                     if (byIndex == -1) {
                         throw new MatthewException(
@@ -125,12 +147,12 @@ public class Matthew {
                                         + "deadline return book /by Sunday");
                     }
 
-                    String description =
-                            input.substring(0, byIndex).trim();
+                    String deadlineDescription =
+                            deadlineInput.substring(0, byIndex).trim();
                     String by =
-                            input.substring(byIndex + 5).trim();
+                            deadlineInput.substring(byIndex + 5).trim();
 
-                    if (description.isEmpty()) {
+                    if (deadlineDescription.isEmpty()) {
                         throw new MatthewException(
                                 "A deadline needs a description.");
                     }
@@ -140,22 +162,23 @@ public class Matthew {
                                 "A deadline needs a time after '/by'.");
                     }
 
-                    Task task = new Deadline(description, by);
-                    tasks.add(task);
+                    Task deadline = new Deadline(deadlineDescription, by);
+                    tasks.add(deadline);
 
-                    printAddedTask(task, tasks.size());
+                    printAddedTask(deadline, tasks.size());
+                    break;
 
-                } else if (response.startsWith("event")) {
+                case EVENT:
                     if (!response.startsWith("event ")) {
                         throw new MatthewException(
                                 "An event needs a description, "
                                         + "/from time and /to time.");
                     }
 
-                    String input = response.substring(6).trim();
+                    String eventInput = response.substring(6).trim();
 
-                    int fromIndex = input.indexOf(" /from ");
-                    int toIndex = input.indexOf(" /to ");
+                    int fromIndex = eventInput.indexOf(" /from ");
+                    int toIndex = eventInput.indexOf(" /to ");
 
                     if (fromIndex == -1 || toIndex == -1
                             || toIndex < fromIndex) {
@@ -165,14 +188,14 @@ public class Matthew {
                                         + "event meeting /from Mon 2pm /to 4pm");
                     }
 
-                    String description =
-                            input.substring(0, fromIndex).trim();
+                    String eventDescription =
+                            eventInput.substring(0, fromIndex).trim();
                     String from =
-                            input.substring(fromIndex + 7, toIndex).trim();
+                            eventInput.substring(fromIndex + 7, toIndex).trim();
                     String to =
-                            input.substring(toIndex + 5).trim();
+                            eventInput.substring(toIndex + 5).trim();
 
-                    if (description.isEmpty()) {
+                    if (eventDescription.isEmpty()) {
                         throw new MatthewException(
                                 "An event needs a description.");
                     }
@@ -187,12 +210,13 @@ public class Matthew {
                                 "An event needs an end time after '/to'.");
                     }
 
-                    Task task = new Event(description, from, to);
-                    tasks.add(task);
+                    Task event = new Event(eventDescription, from, to);
+                    tasks.add(event);
 
-                    printAddedTask(task, tasks.size());
+                    printAddedTask(event, tasks.size());
+                    break;
 
-                } else {
+                case UNKNOWN:
                     throw new MatthewException(
                             "I don't recognise that command.");
                 }
@@ -205,6 +229,37 @@ public class Matthew {
 
         System.out.println(
                 wrap("Goodbye! Have a nice day!"));
+    }
+
+    public static Command getCommand(String response) {
+        String trimmed = response.trim();
+
+        if (trimmed.isEmpty()) {
+            return Command.UNKNOWN;
+        }
+
+        String commandWord = trimmed.split("\\s+")[0];
+
+        switch (commandWord) {
+        case "bye":
+            return Command.BYE;
+        case "list":
+            return Command.LIST;
+        case "mark":
+            return Command.MARK;
+        case "unmark":
+            return Command.UNMARK;
+        case "delete":
+            return Command.DELETE;
+        case "todo":
+            return Command.TODO;
+        case "deadline":
+            return Command.DEADLINE;
+        case "event":
+            return Command.EVENT;
+        default:
+            return Command.UNKNOWN;
+        }
     }
 
     public static int getTaskNumber(String input, int taskCount)
