@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Matthew {
     private static final String line =
             "____________________________________________________________\n";
@@ -16,8 +18,7 @@ public class Matthew {
 
         System.out.println(banner);
 
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (true) {
             String response = System.console().readLine();
@@ -30,8 +31,8 @@ public class Matthew {
                     System.out.print(line);
                     System.out.println("Here are the tasks in your list:");
 
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + "." + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + "." + tasks.get(i));
                     }
 
                     System.out.print(line);
@@ -43,9 +44,9 @@ public class Matthew {
                     }
 
                     int taskNumber = getTaskNumber(
-                            response.substring(5), taskCount);
+                            response.substring(5), tasks.size());
 
-                    Task task = tasks[taskNumber - 1];
+                    Task task = tasks.get(taskNumber - 1);
                     task.markAsDone();
 
                     System.out.print(line);
@@ -60,15 +61,34 @@ public class Matthew {
                     }
 
                     int taskNumber = getTaskNumber(
-                            response.substring(7), taskCount);
+                            response.substring(7), tasks.size());
 
-                    Task task = tasks[taskNumber - 1];
+                    Task task = tasks.get(taskNumber - 1);
                     task.markAsNotDone();
 
                     System.out.print(line);
                     System.out.println(
                             "OK, I've marked this task as not done yet:");
                     System.out.println("  " + task);
+                    System.out.print(line);
+
+                } else if (response.startsWith("delete")) {
+                    if (!response.startsWith("delete ")) {
+                        throw new MatthewException(
+                                "Please tell me which task to delete, e.g. delete 3.");
+                    }
+
+                    int taskNumber = getTaskNumber(
+                            response.substring(7), tasks.size());
+
+                    Task removedTask = tasks.remove(taskNumber - 1);
+
+                    System.out.print(line);
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println(
+                            "Now you have " + tasks.size()
+                                    + " tasks in the list.");
                     System.out.print(line);
 
                 } else if (response.startsWith("todo")) {
@@ -84,15 +104,10 @@ public class Matthew {
                                 "A todo needs a description.");
                     }
 
-                    if (taskCount >= tasks.length) {
-                        throw new MatthewException(
-                                "Your task list is full.");
-                    }
-
                     Task task = new Todo(description);
-                    tasks[taskCount++] = task;
+                    tasks.add(task);
 
-                    printAddedTask(task, taskCount);
+                    printAddedTask(task, tasks.size());
 
                 } else if (response.startsWith("deadline")) {
                     if (!response.startsWith("deadline ")) {
@@ -106,7 +121,8 @@ public class Matthew {
                     if (byIndex == -1) {
                         throw new MatthewException(
                                 "A deadline must include '/by'. "
-                                        + "For example: deadline return book /by Sunday");
+                                        + "For example: "
+                                        + "deadline return book /by Sunday");
                     }
 
                     String description =
@@ -124,20 +140,16 @@ public class Matthew {
                                 "A deadline needs a time after '/by'.");
                     }
 
-                    if (taskCount >= tasks.length) {
-                        throw new MatthewException(
-                                "Your task list is full.");
-                    }
-
                     Task task = new Deadline(description, by);
-                    tasks[taskCount++] = task;
+                    tasks.add(task);
 
-                    printAddedTask(task, taskCount);
+                    printAddedTask(task, tasks.size());
 
                 } else if (response.startsWith("event")) {
                     if (!response.startsWith("event ")) {
                         throw new MatthewException(
-                                "An event needs a description, /from time and /to time.");
+                                "An event needs a description, "
+                                        + "/from time and /to time.");
                     }
 
                     String input = response.substring(6).trim();
@@ -149,7 +161,8 @@ public class Matthew {
                             || toIndex < fromIndex) {
                         throw new MatthewException(
                                 "An event must use '/from' and '/to'. "
-                                        + "For example: event meeting /from Mon 2pm /to 4pm");
+                                        + "For example: "
+                                        + "event meeting /from Mon 2pm /to 4pm");
                     }
 
                     String description =
@@ -174,15 +187,10 @@ public class Matthew {
                                 "An event needs an end time after '/to'.");
                     }
 
-                    if (taskCount >= tasks.length) {
-                        throw new MatthewException(
-                                "Your task list is full.");
-                    }
-
                     Task task = new Event(description, from, to);
-                    tasks[taskCount++] = task;
+                    tasks.add(task);
 
-                    printAddedTask(task, taskCount);
+                    printAddedTask(task, tasks.size());
 
                 } else {
                     throw new MatthewException(
@@ -190,11 +198,13 @@ public class Matthew {
                 }
 
             } catch (MatthewException e) {
-                System.out.println(wrap("OOPS!!! " + e.getMessage()));
+                System.out.println(
+                        wrap("OOPS!!! " + e.getMessage()));
             }
         }
 
-        System.out.println(wrap("Goodbye! Have a nice day!"));
+        System.out.println(
+                wrap("Goodbye! Have a nice day!"));
     }
 
     public static int getTaskNumber(String input, int taskCount)
