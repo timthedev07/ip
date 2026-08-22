@@ -15,13 +15,25 @@ import matthew.task.Task;
 import matthew.task.TaskList;
 import matthew.task.Todo;
 
+/** Loads and saves tasks using a plain-text file. */
 public class Storage {
     private final Path filePath;
 
+    /**
+     * Creates storage backed by the specified file.
+     *
+     * @param filePath Path of the file used to store tasks.
+     */
     public Storage(String filePath) {
         this.filePath = Path.of(filePath);
     }
 
+    /**
+     * Loads all saved tasks, creating the storage file when necessary.
+     *
+     * @return Tasks decoded from the storage file.
+     * @throws MatthewException If the file cannot be read or contains invalid data.
+     */
     public ArrayList<Task> load() throws MatthewException {
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -55,6 +67,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves every task in the supplied list to the storage file.
+     *
+     * @param taskList Tasks to encode and save.
+     * @throws MatthewException If the task list cannot be written.
+     */
     public void save(TaskList taskList)
             throws MatthewException {
 
@@ -79,6 +97,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Decodes one storage line into a task and restores its completion status.
+     *
+     * @param line Storage line to decode.
+     * @return Task represented by the line.
+     * @throws MatthewException If the line does not follow the storage format.
+     */
     private Task parseTask(String line)
             throws MatthewException {
 
@@ -149,6 +174,13 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Encodes a task using the storage format for its concrete task type.
+     *
+     * @param task Task to encode.
+     * @return Storage line representing the task.
+     * @throws MatthewException If the task type is not supported.
+     */
     private String formatTask(Task task)
             throws MatthewException {
 
