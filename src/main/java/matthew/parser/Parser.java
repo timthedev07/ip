@@ -38,43 +38,43 @@ public class Parser {
         String commandWord = trimmed.split("\\s+")[0];
 
         switch (commandWord) {
-        case "bye":
-            return parseExit(trimmed);
+            case "bye":
+                return parseExit(trimmed);
 
-        case "list":
-            return parseList(trimmed);
+            case "list":
+                return parseList(trimmed);
 
-        case "mark":
-            return new MarkCommand(
-                    parseTaskNumber(trimmed, "mark"));
+            case "mark":
+                return new MarkCommand(
+                        parseTaskNumber(trimmed, "mark"));
 
-        case "unmark":
-            return new UnmarkCommand(
-                    parseTaskNumber(trimmed, "unmark"));
+            case "unmark":
+                return new UnmarkCommand(
+                        parseTaskNumber(trimmed, "unmark"));
 
-        case "delete":
-            return new DeleteCommand(
-                    parseTaskNumber(trimmed, "delete"));
+            case "delete":
+                return new DeleteCommand(
+                        parseTaskNumber(trimmed, "delete"));
 
-        case "todo":
-            return new AddCommand(
-                    new Todo(parseTodoDescription(trimmed)));
+            case "todo":
+                return new AddCommand(
+                        new Todo(parseTodoDescription(trimmed)));
 
-        case "deadline":
-            return new AddCommand(
-                    parseDeadline(trimmed));
+            case "deadline":
+                return new AddCommand(
+                        parseDeadline(trimmed));
 
-        case "event":
-            return new AddCommand(
-                    parseEvent(trimmed));
+            case "event":
+                return new AddCommand(
+                        parseEvent(trimmed));
 
-        case "on":
-            return new OnCommand(
-                    parseOnDate(trimmed));
+            case "on":
+                return new OnCommand(
+                        parseOnDate(trimmed));
 
-        default:
-            throw new MatthewException(
-                    "I don't recognise that command.");
+            default:
+                throw new MatthewException(
+                        "I don't recognise that command.");
         }
     }
 

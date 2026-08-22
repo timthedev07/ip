@@ -104,38 +104,38 @@ public class Storage {
 
         try {
             switch (parts[0]) {
-            case "T":
-                if (parts.length != 3) {
-                    throw new MatthewException(
-                            "The saved todo data is corrupted.");
-                }
-                task = new Todo(parts[2]);
-                break;
+                case "T":
+                    if (parts.length != 3) {
+                        throw new MatthewException(
+                                "The saved todo data is corrupted.");
+                    }
+                    task = new Todo(parts[2]);
+                    break;
 
-            case "D":
-                if (parts.length != 4) {
-                    throw new MatthewException(
-                            "The saved deadline data is corrupted.");
-                }
-                task = new Deadline(
-                        parts[2],
-                        LocalDateTime.parse(parts[3]));
-                break;
+                case "D":
+                    if (parts.length != 4) {
+                        throw new MatthewException(
+                                "The saved deadline data is corrupted.");
+                    }
+                    task = new Deadline(
+                            parts[2],
+                            LocalDateTime.parse(parts[3]));
+                    break;
 
-            case "E":
-                if (parts.length != 5) {
-                    throw new MatthewException(
-                            "The saved event data is corrupted.");
-                }
-                task = new Event(
-                        parts[2],
-                        LocalDateTime.parse(parts[3]),
-                        LocalDateTime.parse(parts[4]));
-                break;
+                case "E":
+                    if (parts.length != 5) {
+                        throw new MatthewException(
+                                "The saved event data is corrupted.");
+                    }
+                    task = new Event(
+                            parts[2],
+                            LocalDateTime.parse(parts[3]),
+                            LocalDateTime.parse(parts[4]));
+                    break;
 
-            default:
-                throw new MatthewException(
-                        "The saved task data is corrupted.");
+                default:
+                    throw new MatthewException(
+                            "The saved task data is corrupted.");
             }
         } catch (DateTimeParseException e) {
             throw new MatthewException(
