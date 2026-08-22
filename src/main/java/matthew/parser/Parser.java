@@ -9,6 +9,7 @@ import matthew.command.AddCommand;
 import matthew.command.Command;
 import matthew.command.DeleteCommand;
 import matthew.command.ExitCommand;
+import matthew.command.FindCommand;
 import matthew.command.ListCommand;
 import matthew.command.MarkCommand;
 import matthew.command.OnCommand;
@@ -43,6 +44,9 @@ public class Parser {
 
         case "list":
             return parseList(trimmed);
+
+        case "find":
+            return new FindCommand(parseFindKeyword(trimmed));
 
         case "mark":
             return new MarkCommand(
@@ -96,6 +100,23 @@ public class Parser {
         return new ListCommand();
     }
 
+    private static String parseFindKeyword(String input)
+            throws MatthewException {
+
+        if (!input.startsWith("find ")) {
+            throw new MatthewException(
+                    "Please provide a keyword to search for, e.g. find book.");
+        }
+
+        String keyword = input.substring(5).trim();
+
+        if (keyword.isEmpty()) {
+            throw new MatthewException(
+                    "Please provide a keyword to search for, e.g. find book.");
+        }
+
+        return keyword;
+    }
     private static int parseTaskNumber(
             String input, String command)
             throws MatthewException {

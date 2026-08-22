@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import matthew.command.AddCommand;
 import matthew.command.DeleteCommand;
 import matthew.command.ExitCommand;
+import matthew.command.FindCommand;
 import matthew.command.ListCommand;
 import matthew.command.MarkCommand;
 import matthew.command.OnCommand;
@@ -21,6 +22,7 @@ class ParserTest {
     void parseCreatesTheRightCommands() throws MatthewException {
         assertInstanceOf(ExitCommand.class, Parser.parse(" bye "));
         assertInstanceOf(ListCommand.class, Parser.parse("list"));
+        assertInstanceOf(FindCommand.class, Parser.parse("find book"));
         assertInstanceOf(MarkCommand.class, Parser.parse("mark 2"));
         assertInstanceOf(UnmarkCommand.class, Parser.parse("unmark 2"));
         assertInstanceOf(DeleteCommand.class, Parser.parse("delete 2"));
@@ -36,6 +38,7 @@ class ParserTest {
         assertError("unknown", "I don't recognise that command.");
         assertError("bye now", "The 'bye' command does not take extra arguments.");
         assertError("list all", "The 'list' command does not take extra arguments.");
+        assertError("find", "Please provide a keyword to search for, e.g. find book.");
         assertError("mark", "Please tell me which task to mark, e.g. mark 2.");
         assertError("delete two", "The task number must be a number.");
         assertError("todo", "A todo needs a description.");

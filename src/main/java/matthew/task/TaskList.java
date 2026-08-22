@@ -2,6 +2,7 @@ package matthew.task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import matthew.exception.MatthewException;
 
@@ -70,6 +71,19 @@ public class TaskList {
         return matchingTasks;
     }
 
+    public ArrayList<Task> getTasksContaining(String keyword) {
+        String normalisedKeyword = keyword.toLowerCase(Locale.ROOT);
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT)
+                    .contains(normalisedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+
+        return matchingTasks;
+    }
     private void validateTaskNumber(int taskNumber)
             throws MatthewException {
         if (taskNumber < 1 || taskNumber > tasks.size()) {

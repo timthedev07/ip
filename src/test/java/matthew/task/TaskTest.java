@@ -72,6 +72,8 @@ class TaskTest {
         assertTrue(first.isDone());
         assertEquals(first, tasks.unmark(1));
         assertFalse(first.isDone());
+        assertEquals(1, tasks.getTasksContaining("SECOND").size());
+        assertTrue(tasks.getTasksContaining("second").contains(second));
         assertEquals(second, tasks.delete(2));
         assertEquals(2, tasks.size());
 
