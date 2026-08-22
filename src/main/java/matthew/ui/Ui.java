@@ -1,5 +1,9 @@
+package matthew.ui;
+
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import matthew.task.Task;
 
 public class Ui {
     private static final String LINE =

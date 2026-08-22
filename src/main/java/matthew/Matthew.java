@@ -1,3 +1,12 @@
+package matthew;
+
+import matthew.command.Command;
+import matthew.exception.MatthewException;
+import matthew.parser.Parser;
+import matthew.storage.Storage;
+import matthew.task.TaskList;
+import matthew.ui.Ui;
+
 public class Matthew {
     private final Storage storage;
     private final TaskList tasks;
