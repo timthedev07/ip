@@ -18,6 +18,7 @@ import matthew.task.Deadline;
 import matthew.task.Event;
 import matthew.task.Todo;
 
+/** Parses user input into executable Matthew commands. */
 public class Parser {
     private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
@@ -25,6 +26,17 @@ public class Parser {
     private static final DateTimeFormatter INPUT_DATE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /** Creates a parser. */
+    public Parser() {
+    }
+
+    /**
+     * Parses a complete user command.
+     *
+     * @param input Raw command entered by the user.
+     * @return Command represented by the input.
+     * @throws MatthewException If the input is empty, unknown, or malformed.
+     */
     public static Command parse(String input)
             throws MatthewException {
 
@@ -78,6 +90,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses the exit command and rejects additional arguments.
+     *
+     * @param input Trimmed command input.
+     * @return Exit command represented by the input.
+     * @throws MatthewException If the input contains arguments.
+     */
     private static Command parseExit(String input)
             throws MatthewException {
         if (!input.equals("bye")) {
@@ -87,6 +106,13 @@ public class Parser {
         return new ExitCommand();
     }
 
+    /**
+     * Parses the list command and rejects additional arguments.
+     *
+     * @param input Trimmed command input.
+     * @return List command represented by the input.
+     * @throws MatthewException If the input contains arguments.
+     */
     private static Command parseList(String input)
             throws MatthewException {
         if (!input.equals("list")) {
@@ -96,6 +122,14 @@ public class Parser {
         return new ListCommand();
     }
 
+    /**
+     * Parses the one-based task number following a task command.
+     *
+     * @param input Trimmed command input.
+     * @param command Command whose task number is being parsed.
+     * @return Parsed task number.
+     * @throws MatthewException If the command has no valid task number.
+     */
     private static int parseTaskNumber(
             String input, String command)
             throws MatthewException {
@@ -124,6 +158,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Extracts a todo description from the command input.
+     *
+     * @param input Trimmed todo command input.
+     * @return Todo description.
+     * @throws MatthewException If the command has no description.
+     */
     private static String parseTodoDescription(String input)
             throws MatthewException {
 
@@ -142,6 +183,13 @@ public class Parser {
         return description;
     }
 
+    /**
+     * Parses a deadline command containing a description and due date/time.
+     *
+     * @param input Trimmed deadline command input.
+     * @return Deadline represented by the input.
+     * @throws MatthewException If the command format or date/time is invalid.
+     */
     private static Deadline parseDeadline(String input)
             throws MatthewException {
 
@@ -171,6 +219,13 @@ public class Parser {
                 description, parseDateTime(dateTimeText));
     }
 
+    /**
+     * Parses an event command containing a description and start/end date-times.
+     *
+     * @param input Trimmed event command input.
+     * @return Event represented by the input.
+     * @throws MatthewException If the command format or date/time is invalid.
+     */
     private static Event parseEvent(String input)
             throws MatthewException {
 
@@ -211,6 +266,13 @@ public class Parser {
         return new Event(description, from, to);
     }
 
+    /**
+     * Parses the date supplied to an on command.
+     *
+     * @param input Trimmed on command input.
+     * @return Date on which to search for tasks.
+     * @throws MatthewException If the command or date format is invalid.
+     */
     private static LocalDate parseOnDate(String input)
             throws MatthewException {
 
@@ -229,6 +291,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses a date/time using the application's accepted input format.
+     *
+     * @param input Date/time text in yyyy-MM-dd HHmm format.
+     * @return Parsed date/time.
+     * @throws MatthewException If the date/time format is invalid.
+     */
     private static LocalDateTime parseDateTime(String input)
             throws MatthewException {
         try {
