@@ -19,7 +19,6 @@ public class UnmarkCommand extends Command {
         this.taskNumber = taskNumber;
     }
 
-    @Override
     /**
      * Unmarks the task, persists the task list, and displays a confirmation.
      *
@@ -28,6 +27,7 @@ public class UnmarkCommand extends Command {
      * @param storage Storage used to persist the updated list.
      * @throws MatthewException If the task number is invalid or the list cannot be saved.
      */
+    @Override
     public void execute(TaskList tasks, Ui ui, Storage storage)
             throws MatthewException {
         Task task = tasks.unmark(taskNumber);

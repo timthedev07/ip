@@ -42,8 +42,8 @@ public class Deadline extends Task {
         return by.toLocalDate().equals(date);
     }
 
-    @Override
     /** Returns the deadline formatted with its due date/time and status. */
+    @Override
     public String toString() {
         return "[D]" + super.toString()
                 + " (by: " + by.format(DISPLAY_FORMAT) + ")";
