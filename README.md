@@ -23,3 +23,19 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## Packaging and running the application
+
+Build the executable JAR with Java 25:
+
+```sh
+./gradlew shadowJar
+```
+
+The distributable file is created at `build/libs/matthew.jar`. Copy it into an empty folder and run it from that folder:
+
+```sh
+java -jar matthew.jar
+```
+
+The application saves its task data in `data/matthew.txt` relative to the folder containing the JAR.
