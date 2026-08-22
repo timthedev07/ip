@@ -26,7 +26,8 @@ class ParserTest {
         assertInstanceOf(DeleteCommand.class, Parser.parse("delete 2"));
         assertInstanceOf(AddCommand.class, Parser.parse("todo read book"));
         assertInstanceOf(AddCommand.class, Parser.parse("deadline submit /by 2026-08-22 1200"));
-        assertInstanceOf(AddCommand.class, Parser.parse("event meeting /from 2026-08-22 1200 /to 2026-08-22 1300"));
+        assertInstanceOf(AddCommand.class,
+                Parser.parse("event meeting /from 2026-08-22 1200 /to 2026-08-22 1300"));
         assertInstanceOf(OnCommand.class, Parser.parse("on 2026-08-22"));
     }
 
