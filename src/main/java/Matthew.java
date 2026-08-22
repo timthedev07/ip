@@ -1,8 +1,15 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Matthew {
     private static final String line =
             "____________________________________________________________\n";
+
+    private static final Path DATA_FILE =
+            Path.of("data", "matthew.txt");
 
     private enum Command {
         BYE,
@@ -30,7 +37,7 @@ public class Matthew {
 
         System.out.println(banner);
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = loadTasks();
         boolean isRunning = true;
 
         while (isRunning) {
@@ -66,6 +73,7 @@ public class Matthew {
 
                     Task markedTask = tasks.get(markNumber - 1);
                     markedTask.markAsDone();
+                    saveTasks(tasks);
 
                     System.out.print(line);
                     System.out.println("Nice! I've marked this task as done:");
@@ -84,6 +92,7 @@ public class Matthew {
 
                     Task unmarkedTask = tasks.get(unmarkNumber - 1);
                     unmarkedTask.markAsNotDone();
+                    saveTasks(tasks);
 
                     System.out.print(line);
                     System.out.println(
@@ -102,6 +111,7 @@ public class Matthew {
                             response.substring(7), tasks.size());
 
                     Task removedTask = tasks.remove(deleteNumber - 1);
+                    saveTasks(tasks);
 
                     System.out.print(line);
                     System.out.println("Noted. I've removed this task:");
@@ -127,6 +137,7 @@ public class Matthew {
 
                     Task todo = new Todo(todoDescription);
                     tasks.add(todo);
+                    saveTasks(tasks);
 
                     printAddedTask(todo, tasks.size());
                     break;
@@ -164,6 +175,7 @@ public class Matthew {
 
                     Task deadline = new Deadline(deadlineDescription, by);
                     tasks.add(deadline);
+                    saveTasks(tasks);
 
                     printAddedTask(deadline, tasks.size());
                     break;
@@ -212,6 +224,7 @@ public class Matthew {
 
                     Task event = new Event(eventDescription, from, to);
                     tasks.add(event);
+                    saveTasks(tasks);
 
                     printAddedTask(event, tasks.size());
                     break;
@@ -280,6 +293,148 @@ public class Matthew {
         }
 
         return taskNumber;
+    }
+
+    public static ArrayList<Task> loadTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        try {
+            Path parent = DATA_FILE.getParent();
+
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+
+            if (!Files.exists(DATA_FILE)) {
+                Files.createFile(DATA_FILE);
+                return tasks;
+            }
+
+            List<String> lines = Files.readAllLines(DATA_FILE);
+
+            for (String dataLine : lines) {
+                if (dataLine.isBlank()) {
+                    continue;
+                }
+
+                try {
+                    Task task = parseTask(dataLine);
+                    tasks.add(task);
+                } catch (MatthewException e) {
+                    System.out.println(
+                            wrap("Warning: skipped corrupted saved task: "
+                                    + dataLine));
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println(
+                    wrap("OOPS!!! I couldn't load the saved tasks."));
+        }
+
+        return tasks;
+    }
+
+    public static Task parseTask(String dataLine)
+            throws MatthewException {
+
+        String[] parts = dataLine.split(" \\| ", -1);
+
+        if (parts.length < 3) {
+            throw new MatthewException("Invalid saved task.");
+        }
+
+        String type = parts[0];
+        boolean isDone;
+
+        if (parts[1].equals("1")) {
+            isDone = true;
+        } else if (parts[1].equals("0")) {
+            isDone = false;
+        } else {
+            throw new MatthewException("Invalid task status.");
+        }
+
+        Task task;
+
+        switch (type) {
+        case "T":
+            if (parts.length != 3) {
+                throw new MatthewException("Invalid todo format.");
+            }
+            task = new Todo(parts[2]);
+            break;
+
+        case "D":
+            if (parts.length != 4) {
+                throw new MatthewException("Invalid deadline format.");
+            }
+            task = new Deadline(parts[2], parts[3]);
+            break;
+
+        case "E":
+            if (parts.length != 5) {
+                throw new MatthewException("Invalid event format.");
+            }
+            task = new Event(parts[2], parts[3], parts[4]);
+            break;
+
+        default:
+            throw new MatthewException("Unknown saved task type.");
+        }
+
+        if (isDone) {
+            task.markAsDone();
+        }
+
+        return task;
+    }
+
+    public static void saveTasks(ArrayList<Task> tasks)
+            throws MatthewException {
+
+        try {
+            Path parent = DATA_FILE.getParent();
+
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+
+            ArrayList<String> lines = new ArrayList<>();
+
+            for (Task task : tasks) {
+                String status = task.isDone ? "1" : "0";
+
+                if (task instanceof Todo) {
+                    lines.add(
+                            "T | " + status + " | "
+                                    + task.description);
+
+                } else if (task instanceof Deadline) {
+                    Deadline deadline = (Deadline) task;
+
+                    lines.add(
+                            "D | " + status + " | "
+                                    + deadline.description + " | "
+                                    + deadline.by);
+
+                } else if (task instanceof Event) {
+                    Event event = (Event) task;
+
+                    lines.add(
+                            "E | " + status + " | "
+                                    + event.description + " | "
+                                    + event.from + " | "
+                                    + event.to);
+                }
+            }
+
+            Files.write(DATA_FILE, lines);
+
+        } catch (IOException e) {
+            throw new MatthewException(
+                    "I couldn't save the task list.");
+        }
     }
 
     public static void printAddedTask(Task task, int taskCount) {
