@@ -10,60 +10,106 @@ public class Parser {
     private static final DateTimeFormatter INPUT_DATE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public Command getCommand(String input) {
+    public static Command parse(String input)
+            throws MatthewException {
+
         String trimmed = input.trim();
 
         if (trimmed.isEmpty()) {
-            return Command.UNKNOWN;
+            throw new MatthewException(
+                    "I don't recognise an empty command.");
         }
 
         String commandWord = trimmed.split("\\s+")[0];
 
         switch (commandWord) {
         case "bye":
-            return Command.BYE;
+            return parseExit(trimmed);
+
         case "list":
-            return Command.LIST;
+            return parseList(trimmed);
+
         case "mark":
-            return Command.MARK;
+            return new MarkCommand(
+                    parseTaskNumber(trimmed, "mark"));
+
         case "unmark":
-            return Command.UNMARK;
+            return new UnmarkCommand(
+                    parseTaskNumber(trimmed, "unmark"));
+
         case "delete":
-            return Command.DELETE;
+            return new DeleteCommand(
+                    parseTaskNumber(trimmed, "delete"));
+
         case "todo":
-            return Command.TODO;
+            return new AddCommand(
+                    new Todo(parseTodoDescription(trimmed)));
+
         case "deadline":
-            return Command.DEADLINE;
+            return new AddCommand(
+                    parseDeadline(trimmed));
+
         case "event":
-            return Command.EVENT;
+            return new AddCommand(
+                    parseEvent(trimmed));
+
         case "on":
-            return Command.ON;
+            return new OnCommand(
+                    parseOnDate(trimmed));
+
         default:
-            return Command.UNKNOWN;
+            throw new MatthewException(
+                    "I don't recognise that command.");
         }
     }
 
-    public int parseTaskNumber(String input, int taskCount)
+    private static Command parseExit(String input)
+            throws MatthewException {
+        if (!input.equals("bye")) {
+            throw new MatthewException(
+                    "The 'bye' command does not take extra arguments.");
+        }
+        return new ExitCommand();
+    }
+
+    private static Command parseList(String input)
+            throws MatthewException {
+        if (!input.equals("list")) {
+            throw new MatthewException(
+                    "The 'list' command does not take extra arguments.");
+        }
+        return new ListCommand();
+    }
+
+    private static int parseTaskNumber(
+            String input, String command)
             throws MatthewException {
 
-        int taskNumber;
+        String prefix = command + " ";
+
+        if (!input.startsWith(prefix)) {
+            throw new MatthewException(
+                    "Please tell me which task to " + command
+                            + ", e.g. " + command + " 2.");
+        }
+
+        String numberText = input.substring(prefix.length()).trim();
+
+        if (numberText.isEmpty()) {
+            throw new MatthewException(
+                    "Please tell me which task to " + command
+                            + ", e.g. " + command + " 2.");
+        }
 
         try {
-            taskNumber = Integer.parseInt(input.trim());
+            return Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
             throw new MatthewException(
                     "The task number must be a number.");
         }
-
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new MatthewException(
-                    "There is no task numbered " + taskNumber + ".");
-        }
-
-        return taskNumber;
     }
 
-    public String parseTodoDescription(String input)
+    private static String parseTodoDescription(String input)
             throws MatthewException {
 
         if (!input.startsWith("todo ")) {
@@ -81,7 +127,7 @@ public class Parser {
         return description;
     }
 
-    public Deadline parseDeadline(String input)
+    private static Deadline parseDeadline(String input)
             throws MatthewException {
 
         if (!input.startsWith("deadline ")) {
@@ -106,10 +152,11 @@ public class Parser {
                     "A deadline needs a description.");
         }
 
-        return new Deadline(description, parseDateTime(dateTimeText));
+        return new Deadline(
+                description, parseDateTime(dateTimeText));
     }
 
-    public Event parseEvent(String input)
+    private static Event parseEvent(String input)
             throws MatthewException {
 
         if (!input.startsWith("event ")) {
@@ -149,7 +196,7 @@ public class Parser {
         return new Event(description, from, to);
     }
 
-    public LocalDate parseOnDate(String input)
+    private static LocalDate parseOnDate(String input)
             throws MatthewException {
 
         if (!input.startsWith("on ")) {
@@ -157,27 +204,25 @@ public class Parser {
                     "Please provide a date, e.g. on 2019-12-02.");
         }
 
-        return parseDate(input.substring(3).trim());
+        String dateText = input.substring(3).trim();
+
+        try {
+            return LocalDate.parse(dateText, INPUT_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new MatthewException(
+                    "Date must use yyyy-MM-dd, e.g. 2019-12-02.");
+        }
     }
 
-    private LocalDateTime parseDateTime(String input)
+    private static LocalDateTime parseDateTime(String input)
             throws MatthewException {
         try {
-            return LocalDateTime.parse(input, INPUT_DATE_TIME_FORMAT);
+            return LocalDateTime.parse(
+                    input, INPUT_DATE_TIME_FORMAT);
         } catch (DateTimeParseException e) {
             throw new MatthewException(
                     "Date/time must use yyyy-MM-dd HHmm, "
                             + "e.g. 2019-12-02 1800.");
-        }
-    }
-
-    private LocalDate parseDate(String input)
-            throws MatthewException {
-        try {
-            return LocalDate.parse(input, INPUT_DATE_FORMAT);
-        } catch (DateTimeParseException e) {
-            throw new MatthewException(
-                    "Date must use yyyy-MM-dd, e.g. 2019-12-02.");
         }
     }
 }
