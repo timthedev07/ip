@@ -19,7 +19,6 @@ public class OnCommand extends Command {
         this.date = date;
     }
 
-    @Override
     /**
      * Finds and displays tasks occurring on the command's date.
      *
@@ -27,6 +26,7 @@ public class OnCommand extends Command {
      * @param ui User interface used to display the matching tasks.
      * @param storage Unused storage supplied by the command loop.
      */
+    @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showTasksOn(date.toString(), tasks.getTasksOn(date));
     }

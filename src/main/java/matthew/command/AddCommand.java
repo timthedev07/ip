@@ -19,7 +19,6 @@ public class AddCommand extends Command {
         this.task = task;
     }
 
-    @Override
     /**
      * Adds the task, persists the task list, and displays a confirmation.
      *
@@ -28,6 +27,7 @@ public class AddCommand extends Command {
      * @param storage Storage used to persist the updated list.
      * @throws MatthewException If the updated task list cannot be saved.
      */
+    @Override
     public void execute(TaskList tasks, Ui ui, Storage storage)
             throws MatthewException {
         tasks.add(task);

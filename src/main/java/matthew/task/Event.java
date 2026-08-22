@@ -58,8 +58,8 @@ public class Event extends Task {
         return !date.isBefore(startDate) && !date.isAfter(endDate);
     }
 
-    @Override
     /** Returns the event formatted with its time range and completion status. */
+    @Override
     public String toString() {
         return "[E]" + super.toString()
                 + " (from: " + from.format(DISPLAY_FORMAT)

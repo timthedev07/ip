@@ -2,6 +2,7 @@ package matthew.task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import matthew.exception.MatthewException;
 
@@ -119,6 +120,27 @@ public class TaskList {
                 matchingTasks.add(task);
             } else if (task instanceof Event
                     && ((Event) task).occursOn(date)) {
+                matchingTasks.add(task);
+            }
+        }
+
+        return matchingTasks;
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the supplied keyword,
+     * ignoring differences in letter case.
+     *
+     * @param keyword Keyword to search for.
+     * @return Matching tasks in list order.
+     */
+    public ArrayList<Task> getTasksContaining(String keyword) {
+        String normalisedKeyword = keyword.toLowerCase(Locale.ROOT);
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT)
+                    .contains(normalisedKeyword)) {
                 matchingTasks.add(task);
             }
         }

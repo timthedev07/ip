@@ -9,6 +9,7 @@ import matthew.command.AddCommand;
 import matthew.command.Command;
 import matthew.command.DeleteCommand;
 import matthew.command.ExitCommand;
+import matthew.command.FindCommand;
 import matthew.command.ListCommand;
 import matthew.command.MarkCommand;
 import matthew.command.OnCommand;
@@ -55,6 +56,9 @@ public class Parser {
 
             case "list":
                 return parseList(trimmed);
+
+            case "find":
+                return new FindCommand(parseFindKeyword(trimmed));
 
             case "mark":
                 return new MarkCommand(
@@ -120,6 +124,31 @@ public class Parser {
                     "The 'list' command does not take extra arguments.");
         }
         return new ListCommand();
+    }
+
+    /**
+     * Extracts the keyword from a find command.
+     *
+     * @param input Trimmed find command input.
+     * @return Keyword to search for.
+     * @throws MatthewException If the command has no keyword.
+     */
+    private static String parseFindKeyword(String input)
+            throws MatthewException {
+
+        if (!input.startsWith("find ")) {
+            throw new MatthewException(
+                    "Please provide a keyword to search for, e.g. find book.");
+        }
+
+        String keyword = input.substring(5).trim();
+
+        if (keyword.isEmpty()) {
+            throw new MatthewException(
+                    "Please provide a keyword to search for, e.g. find book.");
+        }
+
+        return keyword;
     }
 
     /**

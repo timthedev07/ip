@@ -45,6 +45,10 @@ class CommandTest {
         new UnmarkCommand(1).execute(tasks, ui, storage);
         assertFalse(tasks.get(1).isDone());
         assertTrue(capture(() -> new ListCommand().execute(tasks, ui, storage)).contains("buy milk"));
+        String findOutput = capture(() -> new FindCommand("MILK").execute(tasks, ui, storage));
+        assertTrue(findOutput.contains("Here are the matching tasks in your list:"));
+        assertTrue(findOutput.contains("1.[T][ ] buy milk"));
+        assertFalse(findOutput.contains("camp"));
         assertTrue(capture(() -> new OnCommand(LocalDate.of(2026, 8, 22)).execute(tasks, ui, storage))
                 .contains("camp"));
 

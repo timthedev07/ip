@@ -54,8 +54,8 @@ public class Task {
         return isDone ? "X" : " ";
     }
 
-    @Override
     /** Returns the task formatted with its completion status. */
+    @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
     }
