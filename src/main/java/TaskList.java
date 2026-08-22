@@ -16,23 +16,29 @@ public class TaskList {
         tasks.add(task);
     }
 
-    public Task delete(int taskNumber) {
+    public Task delete(int taskNumber)
+            throws MatthewException {
+        validateTaskNumber(taskNumber);
         return tasks.remove(taskNumber - 1);
     }
 
-    public Task mark(int taskNumber) {
+    public Task mark(int taskNumber)
+            throws MatthewException {
         Task task = get(taskNumber);
         task.markAsDone();
         return task;
     }
 
-    public Task unmark(int taskNumber) {
+    public Task unmark(int taskNumber)
+            throws MatthewException {
         Task task = get(taskNumber);
         task.markAsNotDone();
         return task;
     }
 
-    public Task get(int taskNumber) {
+    public Task get(int taskNumber)
+            throws MatthewException {
+        validateTaskNumber(taskNumber);
         return tasks.get(taskNumber - 1);
     }
 
@@ -58,5 +64,13 @@ public class TaskList {
         }
 
         return matchingTasks;
+    }
+
+    private void validateTaskNumber(int taskNumber)
+            throws MatthewException {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new MatthewException(
+                    "There is no task numbered " + taskNumber + ".");
+        }
     }
 }
