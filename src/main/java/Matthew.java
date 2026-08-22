@@ -1,4 +1,8 @@
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,6 +15,12 @@ public class Matthew {
     private static final Path DATA_FILE =
             Path.of("data", "matthew.txt");
 
+    private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+
+    private static final DateTimeFormatter INPUT_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     private enum Command {
         BYE,
         LIST,
@@ -20,6 +30,7 @@ public class Matthew {
         TODO,
         DEADLINE,
         EVENT,
+        ON,
         UNKNOWN
     }
 
@@ -52,14 +63,7 @@ public class Matthew {
                     break;
 
                 case LIST:
-                    System.out.print(line);
-                    System.out.println("Here are the tasks in your list:");
-
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + "." + tasks.get(i));
-                    }
-
-                    System.out.print(line);
+                    printTaskList(tasks);
                     break;
 
                 case MARK:
@@ -143,90 +147,15 @@ public class Matthew {
                     break;
 
                 case DEADLINE:
-                    if (!response.startsWith("deadline ")) {
-                        throw new MatthewException(
-                                "A deadline needs a description and /by time.");
-                    }
-
-                    String deadlineInput = response.substring(9).trim();
-                    int byIndex = deadlineInput.indexOf(" /by ");
-
-                    if (byIndex == -1) {
-                        throw new MatthewException(
-                                "A deadline must include '/by'. "
-                                        + "For example: "
-                                        + "deadline return book /by Sunday");
-                    }
-
-                    String deadlineDescription =
-                            deadlineInput.substring(0, byIndex).trim();
-                    String by =
-                            deadlineInput.substring(byIndex + 5).trim();
-
-                    if (deadlineDescription.isEmpty()) {
-                        throw new MatthewException(
-                                "A deadline needs a description.");
-                    }
-
-                    if (by.isEmpty()) {
-                        throw new MatthewException(
-                                "A deadline needs a time after '/by'.");
-                    }
-
-                    Task deadline = new Deadline(deadlineDescription, by);
-                    tasks.add(deadline);
-                    saveTasks(tasks);
-
-                    printAddedTask(deadline, tasks.size());
+                    handleDeadline(response, tasks);
                     break;
 
                 case EVENT:
-                    if (!response.startsWith("event ")) {
-                        throw new MatthewException(
-                                "An event needs a description, "
-                                        + "/from time and /to time.");
-                    }
+                    handleEvent(response, tasks);
+                    break;
 
-                    String eventInput = response.substring(6).trim();
-
-                    int fromIndex = eventInput.indexOf(" /from ");
-                    int toIndex = eventInput.indexOf(" /to ");
-
-                    if (fromIndex == -1 || toIndex == -1
-                            || toIndex < fromIndex) {
-                        throw new MatthewException(
-                                "An event must use '/from' and '/to'. "
-                                        + "For example: "
-                                        + "event meeting /from Mon 2pm /to 4pm");
-                    }
-
-                    String eventDescription =
-                            eventInput.substring(0, fromIndex).trim();
-                    String from =
-                            eventInput.substring(fromIndex + 7, toIndex).trim();
-                    String to =
-                            eventInput.substring(toIndex + 5).trim();
-
-                    if (eventDescription.isEmpty()) {
-                        throw new MatthewException(
-                                "An event needs a description.");
-                    }
-
-                    if (from.isEmpty()) {
-                        throw new MatthewException(
-                                "An event needs a start time after '/from'.");
-                    }
-
-                    if (to.isEmpty()) {
-                        throw new MatthewException(
-                                "An event needs an end time after '/to'.");
-                    }
-
-                    Task event = new Event(eventDescription, from, to);
-                    tasks.add(event);
-                    saveTasks(tasks);
-
-                    printAddedTask(event, tasks.size());
+                case ON:
+                    handleOn(response, tasks);
                     break;
 
                 case UNKNOWN:
@@ -270,8 +199,150 @@ public class Matthew {
             return Command.DEADLINE;
         case "event":
             return Command.EVENT;
+        case "on":
+            return Command.ON;
         default:
             return Command.UNKNOWN;
+        }
+    }
+
+    public static void handleDeadline(
+            String response, ArrayList<Task> tasks)
+            throws MatthewException {
+
+        if (!response.startsWith("deadline ")) {
+            throw new MatthewException(
+                    "A deadline needs a description and /by date/time.");
+        }
+
+        String input = response.substring(9).trim();
+        int byIndex = input.indexOf(" /by ");
+
+        if (byIndex == -1) {
+            throw new MatthewException(
+                    "A deadline must include '/by'. "
+                            + "Example: deadline return book /by 2019-12-02 1800");
+        }
+
+        String description = input.substring(0, byIndex).trim();
+        String dateTimeText = input.substring(byIndex + 5).trim();
+
+        if (description.isEmpty()) {
+            throw new MatthewException(
+                    "A deadline needs a description.");
+        }
+
+        LocalDateTime by = parseDateTime(dateTimeText);
+
+        Task deadline = new Deadline(description, by);
+        tasks.add(deadline);
+        saveTasks(tasks);
+
+        printAddedTask(deadline, tasks.size());
+    }
+
+    public static void handleEvent(
+            String response, ArrayList<Task> tasks)
+            throws MatthewException {
+
+        if (!response.startsWith("event ")) {
+            throw new MatthewException(
+                    "An event needs a description, /from date/time and /to date/time.");
+        }
+
+        String input = response.substring(6).trim();
+
+        int fromIndex = input.indexOf(" /from ");
+        int toIndex = input.indexOf(" /to ");
+
+        if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
+            throw new MatthewException(
+                    "An event must use '/from' and '/to'. "
+                            + "Example: event meeting /from 2019-12-02 1400 "
+                            + "/to 2019-12-02 1600");
+        }
+
+        String description = input.substring(0, fromIndex).trim();
+        String fromText = input.substring(fromIndex + 7, toIndex).trim();
+        String toText = input.substring(toIndex + 5).trim();
+
+        if (description.isEmpty()) {
+            throw new MatthewException(
+                    "An event needs a description.");
+        }
+
+        LocalDateTime from = parseDateTime(fromText);
+        LocalDateTime to = parseDateTime(toText);
+
+        if (to.isBefore(from)) {
+            throw new MatthewException(
+                    "The event end time cannot be before its start time.");
+        }
+
+        Task event = new Event(description, from, to);
+        tasks.add(event);
+        saveTasks(tasks);
+
+        printAddedTask(event, tasks.size());
+    }
+
+    public static void handleOn(
+            String response, ArrayList<Task> tasks)
+            throws MatthewException {
+
+        if (!response.startsWith("on ")) {
+            throw new MatthewException(
+                    "Please provide a date, e.g. on 2019-12-02.");
+        }
+
+        String dateText = response.substring(3).trim();
+        LocalDate date = parseDate(dateText);
+
+        System.out.print(line);
+        System.out.println("Tasks occurring on " + date + ":");
+
+        int counter = 1;
+
+        for (Task task : tasks) {
+            boolean matches = false;
+
+            if (task instanceof Deadline) {
+                matches = ((Deadline) task).occursOn(date);
+            } else if (task instanceof Event) {
+                matches = ((Event) task).occursOn(date);
+            }
+
+            if (matches) {
+                System.out.println(counter + "." + task);
+                counter++;
+            }
+        }
+
+        if (counter == 1) {
+            System.out.println("No deadlines or events found.");
+        }
+
+        System.out.print(line);
+    }
+
+    public static LocalDateTime parseDateTime(String input)
+            throws MatthewException {
+        try {
+            return LocalDateTime.parse(input, INPUT_DATE_TIME_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new MatthewException(
+                    "Date/time must use yyyy-MM-dd HHmm, "
+                            + "e.g. 2019-12-02 1800.");
+        }
+    }
+
+    public static LocalDate parseDate(String input)
+            throws MatthewException {
+        try {
+            return LocalDate.parse(input, INPUT_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new MatthewException(
+                    "Date must use yyyy-MM-dd, e.g. 2019-12-02.");
         }
     }
 
@@ -357,30 +428,38 @@ public class Matthew {
 
         Task task;
 
-        switch (type) {
-        case "T":
-            if (parts.length != 3) {
-                throw new MatthewException("Invalid todo format.");
-            }
-            task = new Todo(parts[2]);
-            break;
+        try {
+            switch (type) {
+            case "T":
+                if (parts.length != 3) {
+                    throw new MatthewException("Invalid todo format.");
+                }
+                task = new Todo(parts[2]);
+                break;
 
-        case "D":
-            if (parts.length != 4) {
-                throw new MatthewException("Invalid deadline format.");
-            }
-            task = new Deadline(parts[2], parts[3]);
-            break;
+            case "D":
+                if (parts.length != 4) {
+                    throw new MatthewException("Invalid deadline format.");
+                }
+                task = new Deadline(
+                        parts[2], LocalDateTime.parse(parts[3]));
+                break;
 
-        case "E":
-            if (parts.length != 5) {
-                throw new MatthewException("Invalid event format.");
-            }
-            task = new Event(parts[2], parts[3], parts[4]);
-            break;
+            case "E":
+                if (parts.length != 5) {
+                    throw new MatthewException("Invalid event format.");
+                }
+                task = new Event(
+                        parts[2],
+                        LocalDateTime.parse(parts[3]),
+                        LocalDateTime.parse(parts[4]));
+                break;
 
-        default:
-            throw new MatthewException("Unknown saved task type.");
+            default:
+                throw new MatthewException("Unknown saved task type.");
+            }
+        } catch (DateTimeParseException e) {
+            throw new MatthewException("Invalid saved date/time.");
         }
 
         if (isDone) {
@@ -403,29 +482,29 @@ public class Matthew {
             ArrayList<String> lines = new ArrayList<>();
 
             for (Task task : tasks) {
-                String status = task.isDone ? "1" : "0";
+                String status = task.isDone() ? "1" : "0";
 
                 if (task instanceof Todo) {
                     lines.add(
                             "T | " + status + " | "
-                                    + task.description);
+                                    + task.getDescription());
 
                 } else if (task instanceof Deadline) {
                     Deadline deadline = (Deadline) task;
 
                     lines.add(
                             "D | " + status + " | "
-                                    + deadline.description + " | "
-                                    + deadline.by);
+                                    + deadline.getDescription() + " | "
+                                    + deadline.getBy());
 
                 } else if (task instanceof Event) {
                     Event event = (Event) task;
 
                     lines.add(
                             "E | " + status + " | "
-                                    + event.description + " | "
-                                    + event.from + " | "
-                                    + event.to);
+                                    + event.getDescription() + " | "
+                                    + event.getFrom() + " | "
+                                    + event.getTo());
                 }
             }
 
@@ -435,6 +514,17 @@ public class Matthew {
             throw new MatthewException(
                     "I couldn't save the task list.");
         }
+    }
+
+    public static void printTaskList(ArrayList<Task> tasks) {
+        System.out.print(line);
+        System.out.println("Here are the tasks in your list:");
+
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
+        }
+
+        System.out.print(line);
     }
 
     public static void printAddedTask(Task task, int taskCount) {
