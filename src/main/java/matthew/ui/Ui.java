@@ -71,10 +71,7 @@ public class Ui {
      */
     public void showTaskList(ArrayList<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
-
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
-        }
+        showNumberedTasks(tasks);
     }
 
     /**
@@ -136,9 +133,7 @@ public class Ui {
         if (tasks.isEmpty()) {
             System.out.println("No deadlines or events found.");
         } else {
-            for (int i = 0; i < tasks.size(); i++) {
-                System.out.println((i + 1) + "." + tasks.get(i));
-            }
+            showNumberedTasks(tasks);
         }
     }
 
@@ -153,9 +148,14 @@ public class Ui {
         if (tasks.isEmpty()) {
             System.out.println("No matching tasks found.");
         } else {
-            for (int i = 0; i < tasks.size(); i++) {
-                System.out.println((i + 1) + "." + tasks.get(i));
-            }
+            showNumberedTasks(tasks);
+        }
+    }
+
+    /** Displays tasks with one-based list numbers. */
+    private void showNumberedTasks(ArrayList<Task> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
     }
 }
