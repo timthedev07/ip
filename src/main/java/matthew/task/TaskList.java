@@ -21,6 +21,7 @@ public class TaskList {
      * @param tasks Initial tasks in display order.
      */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "A task list must have a backing collection";
         this.tasks = tasks;
     }
 
