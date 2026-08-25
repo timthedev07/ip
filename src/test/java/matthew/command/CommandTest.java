@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import matthew.storage.Storage;
-import matthew.task.Deadline;
 import matthew.task.Event;
 import matthew.task.TaskList;
 import matthew.task.Todo;
