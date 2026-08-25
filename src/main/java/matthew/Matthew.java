@@ -63,7 +63,7 @@ public class Matthew {
      *
      * @param args Command-line arguments, which are not used.
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         new Matthew("data/matthew.txt").run();
     }
 }
