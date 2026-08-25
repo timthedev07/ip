@@ -8,12 +8,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
-import matthew.task.Deadline;
 import matthew.task.Task;
 import matthew.task.Todo;
 

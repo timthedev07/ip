@@ -52,8 +52,7 @@ class StorageTest {
         Path path = temporaryDirectory.resolve("tasks.txt");
         Files.writeString(path, "D | 1 | submit | not-a-date");
 
-        MatthewException exception = assertThrows(MatthewException.class,
-                () -> new Storage(path.toString()).load());
+        MatthewException exception = assertThrows(MatthewException.class, () -> new Storage(path.toString()).load());
         assertEquals("The saved date/time data is corrupted.", exception.getMessage());
     }
 }
