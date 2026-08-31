@@ -2,6 +2,8 @@
 
 > Adapted from the [SE-EDU Git conventions](https://se-education.org/guides/conventions/git.html), with one project-specific modification: **a commit message body is required for every commit**.
 
+This convention forces full commit messages.
+
 ## Commit Message: Subject
 
 Every commit must have a well-written commit message subject line.
