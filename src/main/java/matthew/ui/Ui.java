@@ -75,6 +75,21 @@ public class Ui {
     }
 
     /**
+     * Displays tasks in alphabetical order.
+     *
+     * @param tasks Tasks sorted for display.
+     */
+    public void showSortedTasks(ArrayList<Task> tasks) {
+        System.out.println("Here are the tasks sorted alphabetically:");
+
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks found.");
+        } else {
+            showNumberedTasks(tasks);
+        }
+    }
+
+    /**
      * Displays confirmation that a task was added.
      *
      * @param task Added task.

@@ -44,6 +44,8 @@ class CommandTest {
         new UnmarkCommand(1).execute(tasks, ui, storage);
         assertFalse(tasks.get(1).isDone());
         assertTrue(capture(() -> new ListCommand().execute(tasks, ui, storage)).contains("buy milk"));
+        String sortedOutput = capture(() -> new SortCommand().execute(tasks, ui, storage));
+        assertTrue(sortedOutput.indexOf("buy milk") < sortedOutput.indexOf("camp"));
         String findOutput = capture(() -> new FindCommand("MILK").execute(tasks, ui, storage));
         assertTrue(findOutput.contains("Here are the matching tasks in your list:"));
         assertTrue(findOutput.contains("1.[T][ ] buy milk"));

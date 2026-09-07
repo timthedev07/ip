@@ -13,6 +13,7 @@ import matthew.command.FindCommand;
 import matthew.command.ListCommand;
 import matthew.command.MarkCommand;
 import matthew.command.OnCommand;
+import matthew.command.SortCommand;
 import matthew.command.UnmarkCommand;
 import matthew.exception.MatthewException;
 import matthew.task.Deadline;
@@ -56,6 +57,9 @@ public class Parser {
 
             case "list":
                 return parseList(trimmed);
+
+            case "sort":
+                return parseSort(trimmed);
 
             case "find":
                 return new FindCommand(parseFindKeyword(trimmed));
@@ -124,6 +128,22 @@ public class Parser {
                     "The 'list' command does not take extra arguments.");
         }
         return new ListCommand();
+    }
+
+    /**
+     * Parses the sort command and rejects additional arguments.
+     *
+     * @param input Trimmed command input.
+     * @return Sort command represented by the input.
+     * @throws MatthewException If the input contains arguments.
+     */
+    private static Command parseSort(String input)
+            throws MatthewException {
+        if (!input.equals("sort")) {
+            throw new MatthewException(
+                    "The 'sort' command does not take extra arguments.");
+        }
+        return new SortCommand();
     }
 
     /**
