@@ -2,6 +2,7 @@ package matthew.task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Locale;
 
 import matthew.exception.MatthewException;
@@ -104,6 +105,18 @@ public class TaskList {
      */
     public ArrayList<Task> getAll() {
         return new ArrayList<>(tasks);
+    }
+
+    /**
+     * Returns a copy of the tasks sorted alphabetically by description.
+     *
+     * @return Tasks sorted without changing their stored order.
+     */
+    public ArrayList<Task> getTasksSortedByDescription() {
+        return new ArrayList<>(tasks.stream()
+                .sorted(Comparator.comparing(
+                        task -> task.getDescription().toLowerCase(Locale.ROOT)))
+                .toList());
     }
 
     /**
