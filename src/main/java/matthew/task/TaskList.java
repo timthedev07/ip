@@ -113,19 +113,12 @@ public class TaskList {
      * @return Matching deadlines and events in list order.
      */
     public ArrayList<Task> getTasksOn(LocalDate date) {
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-
-        for (Task task : tasks) {
-            if (task instanceof Deadline
-                    && ((Deadline) task).occursOn(date)) {
-                matchingTasks.add(task);
-            } else if (task instanceof Event
-                    && ((Event) task).occursOn(date)) {
-                matchingTasks.add(task);
-            }
-        }
-
-        return matchingTasks;
+        return new ArrayList<>(tasks.stream()
+                .filter(task -> task instanceof Deadline
+                        && ((Deadline) task).occursOn(date)
+                        || task instanceof Event
+                        && ((Event) task).occursOn(date))
+                .toList());
     }
 
     /**
@@ -137,16 +130,11 @@ public class TaskList {
      */
     public ArrayList<Task> getTasksContaining(String keyword) {
         String normalisedKeyword = keyword.toLowerCase(Locale.ROOT);
-        ArrayList<Task> matchingTasks = new ArrayList<>();
 
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase(Locale.ROOT)
-                    .contains(normalisedKeyword)) {
-                matchingTasks.add(task);
-            }
-        }
-
-        return matchingTasks;
+        return new ArrayList<>(tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase(Locale.ROOT)
+                        .contains(normalisedKeyword))
+                .toList());
     }
 
     /**
