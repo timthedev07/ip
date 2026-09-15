@@ -9,6 +9,25 @@
     -fx-text-fill: #f2f2f2;
 }
 
+.app-header {
+    -fx-spacing: 4px;
+}
+
+.app-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.app-subtitle {
+    -fx-text-fill: #bdbdbd;
+    -fx-font-size: 13px;
+}
+
+.status-label {
+    -fx-text-fill: #8fb4ff;
+    -fx-font-size: 12px;
+}
+
 .text-area,
 .text-field {
     -fx-background-color: #252526;
@@ -32,6 +51,28 @@
     -fx-background-radius: 4px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+}
+
+.primary-button {
+    -fx-padding: 8px 18px;
+}
+
+.quick-action {
+    -fx-background-color: #33383f;
+    -fx-font-weight: normal;
+}
+
+.quick-action:hover {
+    -fx-background-color: #454c56;
+}
+
+.command-bar {
+    -fx-padding: 8px 0 0 0;
+}
+
+.transcript {
+    -fx-font-family: "Avenir Next", sans-serif;
+    -fx-font-size: 13px;
 }
 
 .button:hover {
