@@ -41,6 +41,11 @@ public class Matthew {
         boolean isExit = false;
 
         while (!isExit) {
+            if (!ui.hasNextCommand()) {
+                ui.showGoodbye();
+                break;
+            }
+
             try {
                 String fullCommand = ui.readCommand();
                 ui.showLine();

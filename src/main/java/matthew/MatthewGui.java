@@ -174,6 +174,10 @@ public class MatthewGui extends Application {
             ui.showError(e.getMessage());
             appendOutput();
             updateStatus();
+        } catch (RuntimeException e) {
+            ui.showError("Something unexpected happened. Please try that command again.");
+            appendOutput();
+            updateStatus();
         }
     }
 

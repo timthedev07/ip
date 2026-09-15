@@ -42,6 +42,11 @@ public class Parser {
     public static Command parse(String input)
             throws MatthewException {
 
+        if (input == null) {
+            throw new MatthewException(
+                    "I don't recognise an empty command.");
+        }
+
         String trimmed = input.trim();
 
         if (trimmed.isEmpty()) {
