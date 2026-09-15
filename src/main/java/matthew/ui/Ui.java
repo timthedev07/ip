@@ -25,8 +25,10 @@ public class Ui {
         System.out.println("| |\\/| |/ _` | __| __| '_ \\ / _ \\ \\ /\\ / /");
         System.out.println("| |  | | (_| | |_| |_| | | |  __/\\ V  V / ");
         System.out.println("|_|  |_|\\__,_|\\__|\\__|_| |_|\\___| \\_/\\_/  ");
-        System.out.println("Hello! I'm Matthew.");
-        System.out.println("What can I do for you?");
+        System.out.println(
+                "Hello! I'm Matthew. Your mildly over-organised task companion is ready.");
+        System.out.println("What can I do for you today?");
+        System.out.println("I promise to keep the chaos in neatly numbered boxes.");
         System.out.println(LINE);
     }
 
@@ -47,6 +49,8 @@ public class Ui {
     /** Displays Matthew's goodbye message. */
     public void showGoodbye() {
         System.out.println("Goodbye! Have a nice day!");
+        System.out.println(
+                "May your checklist stay calm and your deadlines stay visible.");
     }
 
     /**
@@ -81,6 +85,7 @@ public class Ui {
      */
     public void showSortedTasks(ArrayList<Task> tasks) {
         System.out.println("Here are the tasks sorted alphabetically:");
+        System.out.println("Matthew's tiny filing cabinet has been consulted.");
 
         if (tasks.isEmpty()) {
             System.out.println("No tasks found.");
@@ -100,6 +105,7 @@ public class Ui {
         System.out.println("  " + task);
         System.out.println(
                 "Now you have " + taskCount + " tasks in the list.");
+        System.out.println("Another item safely filed away.");
     }
 
     /**
@@ -110,6 +116,7 @@ public class Ui {
     public void showMarkedTask(Task task) {
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + task);
+        System.out.println("A small victory for organised humans everywhere.");
     }
 
     /**
@@ -121,6 +128,7 @@ public class Ui {
         System.out.println(
                 "OK, I've marked this task as not done yet:");
         System.out.println("  " + task);
+        System.out.println("No judgement — even tidy lists need second chances.");
     }
 
     /**
@@ -134,6 +142,7 @@ public class Ui {
         System.out.println("  " + task);
         System.out.println(
                 "Now you have " + taskCount + " tasks in the list.");
+        System.out.println("The list feels a little lighter already.");
     }
 
     /**
@@ -159,6 +168,7 @@ public class Ui {
      */
     public void showMatchingTasks(ArrayList<Task> tasks) {
         System.out.println("Here are the matching tasks in your list:");
+        System.out.println("Searching the shelves with great concentration...");
 
         if (tasks.isEmpty()) {
             System.out.println("No matching tasks found.");
