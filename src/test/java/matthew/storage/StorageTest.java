@@ -55,4 +55,25 @@ class StorageTest {
         MatthewException exception = assertThrows(MatthewException.class, () -> new Storage(path.toString()).load());
         assertEquals("The saved date/time data is corrupted.", exception.getMessage());
     }
+
+    @Test
+    void loadRejectsBlankDescriptions() throws Exception {
+        Path path = temporaryDirectory.resolve("tasks.txt");
+        Files.writeString(path, "T | 0 |   ");
+
+        MatthewException exception = assertThrows(MatthewException.class, () ->
+                new Storage(path.toString()).load());
+        assertEquals("The saved task data is corrupted.", exception.getMessage());
+    }
+
+    @Test
+    void loadRejectsEventsThatEndBeforeTheyStart() throws Exception {
+        Path path = temporaryDirectory.resolve("tasks.txt");
+        Files.writeString(path,
+                "E | 0 | meeting | 2026-08-22T16:00 | 2026-08-22T15:00");
+
+        MatthewException exception = assertThrows(MatthewException.class, () ->
+                new Storage(path.toString()).load());
+        assertEquals("The saved event data is corrupted.", exception.getMessage());
+    }
 }
