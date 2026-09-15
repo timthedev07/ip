@@ -23,14 +23,16 @@ public class GuiUi extends Ui {
     /** Buffers Matthew's welcome message. */
     @Override
     public void showWelcome() {
-        append("Hello! I'm Matthew — your mildly over-organised task companion.\n"
-                + "What can I do for you?\n\n");
+        append("Hello! I'm Matthew. Your mildly over-organised task companion is ready.\n"
+                + "What can I do for you today?\n"
+                + "I promise to keep the chaos in neatly numbered boxes.\n\n");
     }
 
     /** Buffers Matthew's goodbye message. */
     @Override
     public void showGoodbye() {
-        append("Goodbye! Have a nice day!\n");
+        append("Goodbye! Have a nice day!\n"
+                + "May your checklist stay calm and your deadlines stay visible.\n");
     }
 
     /** Buffers an error message. */
@@ -56,26 +58,30 @@ public class GuiUi extends Ui {
     @Override
     public void showAddedTask(Task task, int taskCount) {
         append("Got it. I've added this task:\n  " + task
-                + "\nNow you have " + taskCount + " tasks in the list.\n");
+                + "\nNow you have " + taskCount + " tasks in the list.\n"
+                + "Another item safely filed away.\n");
     }
 
     /** Buffers confirmation that a task was marked as done. */
     @Override
     public void showMarkedTask(Task task) {
-        append("Nice! I've marked this task as done:\n  " + task + "\n");
+        append("Nice! I've marked this task as done:\n  " + task
+                + "\nA small victory for organised humans everywhere.\n");
     }
 
     /** Buffers confirmation that a task was marked as not done. */
     @Override
     public void showUnmarkedTask(Task task) {
-        append("OK, I've marked this task as not done yet:\n  " + task + "\n");
+        append("OK, I've marked this task as not done yet:\n  " + task
+                + "\nNo judgement — even tidy lists need second chances.\n");
     }
 
     /** Buffers confirmation that a task was deleted. */
     @Override
     public void showDeletedTask(Task task, int taskCount) {
         append("Noted. I've removed this task:\n  " + task
-                + "\nNow you have " + taskCount + " tasks in the list.\n");
+                + "\nNow you have " + taskCount + " tasks in the list.\n"
+                + "The list feels a little lighter already.\n");
     }
 
     /** Buffers tasks occurring on a specified date. */
@@ -93,7 +99,8 @@ public class GuiUi extends Ui {
     /** Buffers tasks matching a keyword. */
     @Override
     public void showMatchingTasks(ArrayList<Task> tasks) {
-        append("Here are the matching tasks in your list:\n");
+        append("Here are the matching tasks in your list:\n"
+                + "Searching the shelves with great concentration...\n");
 
         if (tasks.isEmpty()) {
             append("No matching tasks found.\n");
@@ -105,7 +112,8 @@ public class GuiUi extends Ui {
     /** Buffers tasks in alphabetical order without changing their stored order. */
     @Override
     public void showSortedTasks(ArrayList<Task> tasks) {
-        append("Here are the tasks sorted alphabetically:\n");
+        append("Here are the tasks sorted alphabetically:\n"
+                + "Matthew's tiny filing cabinet has been consulted.\n");
 
         if (tasks.isEmpty()) {
             append("No tasks found.\n");
