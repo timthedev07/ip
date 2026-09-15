@@ -37,4 +37,23 @@ class MatthewTest {
         assertTrue(session.contains("I've added this task"));
         assertTrue(session.contains("Goodbye! Have a nice day!"));
     }
+
+    @Test
+    void runStopsCleanlyWhenInputEnds() {
+        InputStream originalInput = System.in;
+        PrintStream originalOutput = System.out;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            System.setIn(new ByteArrayInputStream("list\n".getBytes(StandardCharsets.UTF_8)));
+            System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
+
+            new Matthew(temporaryDirectory.resolve("tasks.txt").toString()).run();
+        } finally {
+            System.setIn(originalInput);
+            System.setOut(originalOutput);
+        }
+
+        assertTrue(output.toString(StandardCharsets.UTF_8)
+                .contains("Goodbye! Have a nice day!"));
+    }
 }

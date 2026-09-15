@@ -53,6 +53,11 @@ class ParserTest {
         assertError("on tomorrow", "Date must use yyyy-MM-dd, e.g. 2019-12-02.");
     }
 
+    @Test
+    void parseRejectsNullInputLikeAnEmptyCommand() {
+        assertError(null, "I don't recognise an empty command.");
+    }
+
     private void assertError(String input, String expectedMessage) {
         MatthewException exception = assertThrows(MatthewException.class, () -> Parser.parse(input));
         assertEquals(expectedMessage, exception.getMessage());
