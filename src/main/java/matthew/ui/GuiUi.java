@@ -23,7 +23,8 @@ public class GuiUi extends Ui {
     /** Buffers Matthew's welcome message. */
     @Override
     public void showWelcome() {
-        append("Hello! I'm Matthew.\nWhat can I do for you?\n\n");
+        append("Hello! I'm Matthew — your mildly over-organised task companion.\n"
+                + "What can I do for you?\n\n");
     }
 
     /** Buffers Matthew's goodbye message. */
@@ -96,6 +97,18 @@ public class GuiUi extends Ui {
 
         if (tasks.isEmpty()) {
             append("No matching tasks found.\n");
+        } else {
+            appendTasks(tasks);
+        }
+    }
+
+    /** Buffers tasks in alphabetical order without changing their stored order. */
+    @Override
+    public void showSortedTasks(ArrayList<Task> tasks) {
+        append("Here are the tasks sorted alphabetically:\n");
+
+        if (tasks.isEmpty()) {
+            append("No tasks found.\n");
         } else {
             appendTasks(tasks);
         }
