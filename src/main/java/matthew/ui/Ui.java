@@ -41,7 +41,11 @@ public class Ui {
         return scanner.nextLine();
     }
 
-    /** Returns whether another command can be read from standard input. */
+    /**
+     * Returns whether another command can be read from standard input.
+     *
+     * @return {@code true} if another command is available.
+     */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
     }

@@ -9,7 +9,11 @@ public class Launcher {
     public Launcher() {
     }
 
-    /** Starts the JavaFX application. */
+    /**
+     * Starts the JavaFX application.
+     *
+     * @param args Command-line arguments forwarded to JavaFX.
+     */
     public static void main(String... args) {
         Application.launch(MatthewGui.class, args);
     }

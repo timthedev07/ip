@@ -13,7 +13,11 @@ public class GuiUi extends Ui {
         super();
     }
 
-    /** Returns buffered responses and clears the buffer. */
+    /**
+     * Returns buffered responses and clears the buffer.
+     *
+     * @return Buffered response text.
+     */
     public String consumeOutput() {
         String result = output.toString();
         output.setLength(0);
