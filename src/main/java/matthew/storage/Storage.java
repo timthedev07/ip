@@ -114,6 +114,11 @@ public class Storage {
                     "The saved task data is corrupted.");
         }
 
+        if (parts[2].isBlank()) {
+            throw new MatthewException(
+                    "The saved task data is corrupted.");
+        }
+
         boolean isDone;
 
         if (parts[1].equals("1")) {
@@ -152,10 +157,18 @@ public class Storage {
                         throw new MatthewException(
                                 "The saved event data is corrupted.");
                     }
+                    LocalDateTime from = LocalDateTime.parse(parts[3]);
+                    LocalDateTime to = LocalDateTime.parse(parts[4]);
+
+                    if (to.isBefore(from)) {
+                        throw new MatthewException(
+                                "The saved event data is corrupted.");
+                    }
+
                     task = new Event(
                             parts[2],
-                            LocalDateTime.parse(parts[3]),
-                            LocalDateTime.parse(parts[4]));
+                            from,
+                            to);
                     break;
 
                 default:
@@ -165,6 +178,9 @@ public class Storage {
         } catch (DateTimeParseException e) {
             throw new MatthewException(
                     "The saved date/time data is corrupted.");
+        } catch (IllegalArgumentException e) {
+            throw new MatthewException(
+                    "The saved task data is corrupted.");
         }
 
         if (isDone) {

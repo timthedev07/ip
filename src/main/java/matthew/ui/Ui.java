@@ -41,6 +41,11 @@ public class Ui {
         return scanner.nextLine();
     }
 
+    /** Returns whether another command can be read from standard input. */
+    public boolean hasNextCommand() {
+        return scanner.hasNextLine();
+    }
+
     /** Displays a separator line. */
     public void showLine() {
         System.out.println(LINE);
